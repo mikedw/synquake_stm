@@ -1,7 +1,6 @@
 results*.txt
 stats.out
 build
-server
 results.out
 .DS_Store
 libhoard.so
