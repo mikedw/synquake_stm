@@ -1,0 +1,106 @@
+There are 2 options for running the game benchmark:
+
+A) Install linux and the requiered libraries on your own machine
+B) Connect over ssh to the cluster and run it there
+
+I recommend to install the game on your own machine in a linux 
+environment (even though it might take a little longer to do that).
+Otherwise you might run into problems when running the client with
+the gui turned on. Some of the XServers running on windows have a
+hard time displaying 3Dgraphics over an SSH Connection (ex. Xming).
+If you connect over ssh to the cluster from a linux environment, 
+you will be able to see the client gui but you are still going to 
+get a poor frame rate ( due to software rendering).
+
+
+
+Method A : Install linux and the requiered libraries on your own machine
+
+Step 1 - Ubuntu
+-Download Ubuntu(ubuntu-8.04-desktop-i386.iso) from Ubuntu.com -715MB
+-Burn it to a CD/DVD
+-Boot up computer from CD/DVD
+-Install (If you are doing this on your current OS drive, be careful 
+not to destroy your current OS in this process; get another hard 
+drive, or split your current one using something like partition 
+magic, and install on a new partition)
+-Connect to the internet, this can be easy or hard, depending on your 
+drivers. From my brief experience, wireless drivers are much harder 
+to make work than internal NIC drivers.
+-Let Ubuntu update : sudo apt-get upgrade (this might take a while)
+
+Step 2 - Start to get libraries
+sudo apt-get install g++
+sudo apt-get install libsdl1.2-dev 
+sudo apt-get install libsdl-net1.2-dev
+
+
+Method B : Connect over ssh to the cluster and run it there
+
+Step 1 - Ubuntu
+-Download Ubuntu(ubuntu-8.04-desktop-i386.iso) from Ubuntu.com -715MB
+-Burn it to a CD/DVD
+-Boot up computer from CD/DVD into LIVE mode
+
+Step 2 - Connect over ssh to the cluster
+-Open up a terminal and connect to one of the universities networks 
+that allows outside access (eg. ecf, eecg)
+-Connect to one of the machines from our cluster using your utor_id 
+as username and your student# as password. Please make sure that you
+change your password as soon as possible. The range of machines that
+you have access to is: c63.csl.toronto.edu -> c99.csl.toronto.edu
+
+
+
+The rest of the process is similar for both methods A) and B)
+
+
+Step 3 - Compile and build
+
+At this point in time, you should be able to do a make, and have it 
+compile into server and client.
+
+To test this, do make, in the directory.  Next, you should run in one 
+terminal window:
+./server <config file>
+eg.:
+./server config_demo.ini
+
+Then to start a client, use another window with:
+./client <server name>
+eg.:
+./client localhost
+
+To start 100 clients:
+for((i=0; i <100; i++)); do ./client localhost & done
+
+To start a gui-based client, do:
+./client --gui localhost
+
+At this point, a window should pop-up and you should see a guy hovering 
+around eating apples.
+When connecting over ssh make sure that for the client with gui turned 
+on you have specified the Xsession forwarding flag: "-X", at each step
+of the ssh connection. (eg. ssh -X user@host )
+
+
+
+Annex 1 - Install VIM for editing
+
+sudo apt-get install vim
+
+Setup your .vimrc code  (vim ~/.vimrc)
+
+:set bs=2 
+:set number 
+:set expandtab 
+:set tabstop=4 
+:retab 
+:set shiftwidth=4 
+:syntax on 
+:set ignorecase 
+:set cindent 
+:set autoindent 
+:set smartindent 
+
+ 

@@ -1,0 +1,69 @@
+#!/bin/bash
+
+die() {
+    echo >&2 "$@"
+    exit 1
+}
+
+#Validate number of arguments
+[ "$#" -eq 2 ] || die "Usage: ./run_scaling_tests.script <Number of players> <Number of cycles>"
+
+#Number of players
+n_players=$1
+
+#Number of cycles 
+n_cycles=$2
+
+#Quest configuration
+n_quests=-1    #-1 here because the coordinates in percentages
+n_spread_per_quest=4
+quest_file=4quadrants.quest
+
+#Map configuration and locking
+map_x=1024
+map_y=1024
+lock_gran=lock_leaves
+
+#Entity configuration
+speed_max=64
+apple_ratio=0
+wall_ratio=0
+
+#Output setup
+date=`date +"%y%m%d"`
+file_out="results_scaling_$date.txt" 
+
+
+echo "" | tee -a $file_out;
+
+for quest_file in 4quadrants.quest 4splits.quest 4worst.quest; do
+	for act_file in random_moves/random_moves9.conf; do 
+	for bal_pol in lightest spread static3 graph; do 
+		for n_th in 4; do
+				run_cmd="./server $n_th $n_players $n_cycles $n_quests $n_spread_per_quest $quest_file $map_x $map_y 8 $speed_max $apple_ratio $wall_ratio $bal_pol $act_file 100 $lock_gran" 
+				echo $run_cmd | tee -a $file_out; 
+				$run_cmd | tee -a $file_out; 
+				echo "" | tee -a $file_out;
+				#echo $run_cmd;
+		done;
+	done;
+	done;
+	echo "" | tee -a $file_out;
+done;
+
+n_quests=-4
+
+for quest_file in 4moving.quest; do
+	for act_file in random_moves/random_moves9.conf; do 
+	for bal_pol in lightest spread static3 graph; do 
+		for n_th in 4; do
+				run_cmd="./server $n_th $n_players $n_cycles $n_quests $n_spread_per_quest $quest_file $map_x $map_y 8 $speed_max $apple_ratio $wall_ratio $bal_pol $act_file 100 $lock_gran" 
+				echo $run_cmd | tee -a $file_out; 
+				$run_cmd | tee -a $file_out; 
+				echo "" | tee -a $file_out;
+				#echo $run_cmd;
+		done;
+	done;
+	done;
+	echo "" | tee -a $file_out;
+done;

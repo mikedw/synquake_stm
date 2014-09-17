@@ -1,0 +1,34 @@
+#!/bin/bash
+
+make clean; 
+make MY_FLAGS="-D__LOAD_BALANCING__";
+
+
+
+n_players=10000
+n_cycles=501
+n_quests=1
+n_spread_per_quest=4
+
+map_x=512
+map_y=512
+
+date=`date +"%y%m%d_%H%M%S"`
+
+file_out="results_balance_threads_$date.txt" 
+
+
+for bal_pol in none static lightest spread quadtree; do 
+	for n_th in 4; do 
+		for depth in 8; do
+			run_cmd="./server config.ini $n_th $n_players $n_cycles $n_quests $n_spread_per_quest $map_x $map_y $depth $bal_pol" 
+			echo $run_cmd | tee -a $file_out; 
+			$run_cmd | tee -a $file_out; 
+		done;
+	done; 
+	echo "" | tee -a $file_out;
+done;
+
+
+
+#	for(( i = 0; i < 4; i++)); do

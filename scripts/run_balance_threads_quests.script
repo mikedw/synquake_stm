@@ -1,0 +1,16 @@
+#!/bin/bash
+
+make clean; 
+make MY_FLAGS="-D__LOAD_BALANCING__";
+
+for bal_pol in none static lightest spread quadtree; do 
+	for n_th in 1 2 4; do 
+		echo "./server ./config/default.cfg $n_th 10000 100 1 4 2048 2048 8 $bal_pol\n" | tee -a results_balance_threads_090403.txt; 
+		./server ./config/default.cfg $n_th 10000 100 0 0 2048 2048 8 $bal_pol | tee -a results_balance_threads_090403.txt; 
+	done; 
+	echo "" | tee -a results_balance_threads_090403.txt;
+done;
+
+
+
+#	for(( i = 0; i < 4; i++)); do

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+die() {
+    echo >&2 "$@"
+    exit 1
+}
+
+# Validate number of arguments
+[ "$#" -eq 2 ] || die "Usage: ./scripts/run_scaling_tests.script <Number of players> <Number of cycles>"
+
+# Number of players
+n_players=$1
+
+# Number of cycles 
+n_cycles=$2
+
+# Number of threads
+n_th=4
+
+# Quest configuration #-1 here because the coordinates in ratios
+n_quests[0]="-1"
+n_quests[1]="-1"
+n_quests[2]="0"
+n_spread_per_quest=4
+
+# Map configuration and locking
+map_x=1024
+map_y=1024
+lock_gran=lock_tree
+#lock_gran=lock_leaves
+
+# Entity configuration
+speed_max=32
+apple_ratio=0
+wall_ratio=0
+
+# Create a result directory
+mkdir -p results
+
+# ./quests/1center.quest ./quests/4quadrants.quest -> Quests are in 4 different quadrants
+#./moves/random_actions.conf ./moves/random_moves/random_moves12.conf
+#none static1 spread lightest spread quadtree areatree
+count=0;
+#                 High Contention        Medium Contention         Low Contention
+for quest_file in ./quests/1center.quest ./quests/4quadrants.quest ./quests/noquests.quest; do
+	val=${n_quests[$count]};
+	run_cmd="./server $n_th $n_players $n_cycles $val $n_spread_per_quest $quest_file $map_x $map_y 8 $speed_max $apple_ratio $wall_ratio spread ./moves/random_moves.conf 100 $lock_gran" 
+	echo $run_cmd;
+	$run_cmd; 
+	echo "";
+	mv ./itm.log ./results/itm_$count.log
+	count=$((count+1));
+done;

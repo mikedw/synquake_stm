@@ -1,0 +1,86 @@
+#! /bin/bash
+
+echo "$0 $1";
+
+k=0
+for WORD in `head -n 1 $1`
+do
+	if (( k == 1 )); then n_th=$WORD; fi;
+	if (( k == 2 )); then n_players=$WORD; fi;
+	if (( k == 3 )); then n_cycles=$WORD; fi;
+	if (( k == 4 )); then mapx=$WORD; fi;
+	if (( k == 5 )); then mapy=$WORD; fi;
+	if (( k == 6 )); then depth=$WORD; fi;
+	if (( k == 7 )); then quest_spread=$WORD; fi;
+	if (( k == 8 )); then print_fq=$WORD; fi;
+	(( k++ ));
+done
+
+n_regs_x=$[ 1<<(($depth+1)/2) ]
+n_regs_y=$[ 1<<(($depth)/2) ]
+
+size_reg_x=$[ $mapx / $n_regs_x ]
+size_reg_y=$[ $mapy / $n_regs_y ]
+
+n_prints=$[ $n_cycles / $print_fq ]
+
+size_prints=$[ 10 * $n_prints ]
+
+
+
+
+rm -f gpl.tmp;
+
+echo -e "  \n\
+set terminal pdf color dashed enhanced font 'Times-Roman,8' size 10,$size_prints \n\
+set output '$1.pdf'  \n\
+\n\
+\n\
+set style line 1 lt rgb 'red'    lw 3 pt 3 ps 2	\n\
+set style line 2 lt rgb 'orange' lw 3 pt 5 ps 2	\n\
+set style line 3 lt rgb 'green'  lw 3 pt 7 ps 2	\n\
+set style line 4 lt rgb 'navy'   lw 3 pt 9 ps 2	\n\
+\n\
+\n\
+set xlabel 'X'	\n\
+set ylabel 'Y'	\n\
+\n\
+\n\
+set multiplot layout $n_prints,1 columnsfirst title 'MAP'	\n\
+" >> gpl.tmp
+
+
+for(( i = 0; i < $n_prints; i++ )); do
+
+	cycle=$[ ($i+1) * $print_fq -1 ]
+
+	echo -en "  \n
+	set title 'PrintOut: $[$i+1] -- Cycle: $[$cycle+1]' \n\
+	set xtics $size_reg_x \n\
+	set ytics $size_reg_y \n\
+	set xrange [0:$mapx]	\n\
+	set yrange [0:$mapy]	\n\
+	set grid	\n\
+	plot " >> gpl.tmp
+	
+	for(( j = 0; j < $n_th; j++ )); do
+		echo -en "  \
+			'$1' u ( (\$1 == $cycle && \$4 == $j) ?  \$2 : 1/0 ):3 title 'Thread $j' w points pt $[$j+1] \
+		" >> gpl.tmp;
+		if(( $j < $n_th - 1 )); then 
+			echo -en " , " >> gpl.tmp;
+		fi
+	done;
+	echo -e "  \n" >> gpl.tmp
+
+done;
+
+echo -e "  \n\
+unset multiplot	\n\
+" >> gpl.tmp
+
+
+gnuplot "gpl.tmp";
+rm gpl.tmp;
+
+

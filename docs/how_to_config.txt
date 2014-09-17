@@ -1,0 +1,63 @@
+    How to configure
+--------------------------
+
+[Server]
+
+server.port = sets the port on which the server waits for connections
+server.number_of_threads = sets the number of threads the server uses for processing requests
+server.update_interval = sets the interval (in ms) between two consecutive "Update Clients" phases 
+server.stats_interval = sets the interval (in ms) between two consecutive stats outputs to the stats.out file
+                      = due to its format stats.out should be viewed using a spreadsheet application
+
+[Workload]
+/* Used only when running a synthetic workload */
+/* To toggle on/off the synthetic workload, uncomment/comment line 10 in server_cl.h */
+workload.cycles = number of cycles to run for each server thread
+workload.client_count = total number of clients
+workload.max_num_actions = maximum number of actions per client per cycle
+/* Each server thread runs for a number of cycles, 
+   in each cycle, for each assigned client, it performs a 
+   random number (between [0, max_num_actions]) of randomly selected actions  */
+
+[Quest]
+
+server.quest_between = sets the interval (in ms) between two consecutive quests
+server.quest_length = sets the duration (in ms) of a quest
+
+[Client]
+
+client.disconnect_timeout = sets the amount of time the clients waits for a message from the server before it disconnects
+client.think_time = sets the interval (in ms) between two consecutive actions taken by a client
+client.render_delay = sets the minumum time that needs to pass between the rendering of two consecutive frames
+
+[Map]
+
+map.size_x = the size of the map along the x coordinate
+map.size_y = the size of the map along the y coordinate
+map.tree_depth = the depth of the area node tree
+map.balance_type = the type of load balancing
+/* To toggle on/off the load balancing, uncomment/comment line 13 in server_cl.h */
+
+[Entity Types]
+
+n_entity_types = no of entity types used in the game
+
+entity_type[i].name = the name of this entity type
+entity_type[i].ratio = the percentage out of the map area that can be filled with entities of this type
+entity_type[i].fixed = flag saying whether entities of this type can move around the map
+entity_type[i].n_attr = the number of attributes that this entity type has
+
+entity_type[i].attribute_type[j].name = the name of this attribute type
+entity_type[i].attribute_type[j].min = the minimum value that this attribute can have
+entity_type[i].attribute_type[j].max = the maximum value that this attribute can have
+
+
+[Actions]
+
+n_actions = no of actions
+
+action[i].name = the name of this action
+action_range[i].front = the range of this action in front of the player
+action_range[0].behind = the range of this action behind the player
+action_range[0].left = the range of this action to the left of the player
+action_range[0].right = the range of this action to the right of the player
